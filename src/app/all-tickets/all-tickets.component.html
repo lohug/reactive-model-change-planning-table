@@ -1,0 +1,155 @@
+<div>
+    <mat-toolbar color ="primary" style="position: sticky;top: 0px;z-index: 10;">
+        <mat-form-field>
+            <mat-select [(ngModel)]="selected" (ngModelChange)="tableUpdate()">
+                <mat-option value="SMT-1">SMT 1</mat-option>
+                <mat-option value="SMT-4">SMT 4</mat-option>
+                <mat-option value="SMT-5">SMT 5</mat-option>
+                <mat-option value="SMT-15">SMT 15</mat-option>
+                <mat-option value="SMT-16">SMT 16</mat-option>
+                <mat-option value="ASSY-1">ASSY 1</mat-option>
+                <mat-option value="ASSY-2">ASSY 2</mat-option>
+                <mat-option value="ASSY-6">ASSY 6</mat-option>
+                <mat-option value="ASSY-19">ASSY 19</mat-option>
+                <mat-option value="ASSY-23">ASSY 23</mat-option>
+                <mat-option value="ASSY-24">ASSY 24</mat-option>
+                <mat-option value="ASSY-27">ASSY 27</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <!-- This fills the remaining space of the current row -->
+        <span class="fill-remaining-space"></span>
+        <app-login></app-login>
+    </mat-toolbar>
+
+    <ng-container *ngIf="user && user.privilegio == 'planning'; else elseBlock2">
+        <div>
+            <div style="margin-left: 50px; margin-right: 50px; margin-top: 25px;">
+                <div  class="grid-container sticky">
+                    <div><b>Model</b></div>
+                    <div><b>DJ</b></div>
+                    <div><b>Required</b></div>
+                    <div><b>Real</b></div>
+                    <div><b>Start</b></div>
+                    <div><b>End</b></div>
+                    <div><b></b></div>
+                </div>
+                <div cdkDropList (cdkDropListDropped)="drop($event)">
+                    <div  class="grid-container" *ngFor = "let ticket of tickets; let i = index" [ngClass] = "{'white':ticket.type == 0, 'aqua':ticket.type == 1, 'red':ticket.type == 2, 'gap': gapMaker(i)}" cdkDrag>
+                        <div class="grid-item">{{ticket.model}}</div>
+                        <ng-container *ngIf="ticket.type == 0; else elseBlock">
+                            <div class="grid-item">
+                                <input class="input-dj" type = "number" min="0" step="1" [(ngModel)]="ticket.dj">
+                            </div>
+                            <div class="grid-item">
+                                <input class="input-number" type="number" min="0" step="1" [ngModel]="ticket.estimate" (ngModelChange)="timeUpdate(0, i, $event)">
+                            </div>
+                            <div class="grid-item">
+                                <div style="height: 18px; align-items: center; display: flex;">
+                                    <input disabled class="input-number-left" type="number" min="0" step="1" [(ngModel)]="ticket.real">
+                                    <input class="input-number-right" type="number" min="0" max="9999" step="1" value="0" [(ngModel)]="ticket.realAdd" placeholder="0">
+                                    <button mat-flat-button (click)="realAddition(i)" color="warn" style="height: 100%; min-width: 1%; position: relative; padding: 9px;border-radius: 0px 6px 6px 0px;">
+                                        <mat-icon style="font-size: 17px;position: absolute; top: 0px;left: -3px;">add</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-template #elseBlock>
+                            <div class="grid-item"></div>
+                            <div class="grid-item"></div>
+                            <div class="grid-item"></div>
+                        </ng-template>
+                        <div class="grid-item">{{ticket.start}}</div>
+                        <div class="grid-item">{{ticket.end}}</div>
+                        <div class="example-handle" cdkDragHandle>
+                            <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+                                <path d="M0 0h24v24H0z" fill="none"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class = "save-table" mat-fab color = "accent" (click) = "saveTable()"><mat-icon>save</mat-icon></button>
+    </ng-container>
+    <ng-template #elseBlock2>
+        <ng-container *ngIf="user; else elseBlock3">
+            <div>
+                <div style="margin-left: 50px; margin-right: 50px; margin-top: 25px;">
+                    <div  class="grid-container sticky">
+                        <div><b>Model</b></div>
+                        <div><b>DJ</b></div>
+                        <div><b>Required</b></div>
+                        <div><b>Real</b></div>
+                        <div><b>Start</b></div>
+                        <div><b>End</b></div>
+                        <div><b></b></div>
+                    </div>
+                    <div>
+                        <div  class="grid-container" *ngFor = "let ticket of tickets; let i = index" [ngClass] = "{'white':ticket.type == 0, 'aqua':ticket.type == 1, 'red':ticket.type == 2}">
+                            <div class="grid-item">{{ticket.model}}</div>
+                            <ng-container *ngIf="ticket.type == 0; else elseBlock">
+                                <div class="grid-item">{{ticket.dj}}</div>
+                                <div class="grid-item">{{ticket.estimate}}</div>
+                                <div class="grid-item">
+                                    <div style="height: 18px; align-items: center; display: flex;">
+                                        <input disabled class="input-number-left" type="number" min="0" step="1" [(ngModel)]="ticket.real">
+                                        <input class="input-number-right" type="number" min="0" max="9999" step="1" value="0" [(ngModel)]="ticket.realAdd" placeholder="0">
+                                        <button mat-flat-button (click)="realAddition(i)" color="warn" style="height: 100%; min-width: 1%; position: relative; padding: 9px;border-radius: 0px 6px 6px 0px;">
+                                            <mat-icon style="font-size: 17px;position: absolute; top: 0px;left: -3px;">add</mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-template #elseBlock>
+                                <div class="grid-item"></div>
+                                <div class="grid-item"></div>
+                                <div class="grid-item"></div>
+                            </ng-template>
+                            <div class="grid-item">{{ticket.start}}</div>
+                            <div class="grid-item">{{ticket.end}}</div>
+                            <div >
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <ng-template #elseBlock3>
+            <div>
+                <div style="margin-left: 50px; margin-right: 50px; margin-top: 25px;">
+                    <div  class="grid-container sticky">
+                        <div><b>Model</b></div>
+                        <div><b>DJ</b></div>
+                        <div><b>Required</b></div>
+                        <div><b>Real</b></div>
+                        <div><b>Start</b></div>
+                        <div><b>End</b></div>
+                        <div><b></b></div>
+                    </div>
+                    <div>
+                        <div  class="grid-container" *ngFor = "let ticket of tickets; let i = index" [ngClass] = "{'white':ticket.type == 0, 'aqua':ticket.type == 1, 'red':ticket.type == 2}">
+                            <div class="grid-item">{{ticket.model}}</div>
+                            <ng-container *ngIf="ticket.type == 0; else elseBlock">
+                                <div class="grid-item">{{ticket.dj}}</div>
+                                <div class="grid-item">{{ticket.estimate}}</div>
+                                <div class="grid-item">{{ticket.real}}</div>
+                            </ng-container>
+                            <ng-template #elseBlock>
+                                <div class="grid-item"></div>
+                                <div class="grid-item"></div>
+                                <div class="grid-item"></div>
+                            </ng-template>
+                            <div class="grid-item">{{ticket.start}}</div>
+                            <div class="grid-item">{{ticket.end}}</div>
+                            <div >
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ng-template>
+</div>

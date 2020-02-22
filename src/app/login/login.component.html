@@ -1,0 +1,9 @@
+
+<button *ngIf="user==null; else elseBlock" mat-flat-button color="accent" (click)="openDialog()">
+    Login
+</button>
+<ng-template #elseBlock>
+    <button mat-flat-button color="accent" (click)="logout()">
+        Logout
+    </button>
+</ng-template>

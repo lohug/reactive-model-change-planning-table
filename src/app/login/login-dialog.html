@@ -1,0 +1,13 @@
+<form [formGroup]="form">
+    <div>
+        <mat-form-field appearance="outline" style="font-size: small;">
+            <mat-label>Usuario</mat-label>
+            <input matInput name="email" formControlName="email">
+        </mat-form-field>
+        <mat-form-field appearance="outline" style="font-size: small;">
+            <mat-label>Contraseña</mat-label>
+            <input matInput name="password" formControlName="password" type="password">
+        </mat-form-field>
+        <button mat-flat-button color="accent" (click)="login()">Login</button>
+    </div>
+</form>

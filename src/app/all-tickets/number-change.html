@@ -1,0 +1,10 @@
+<h1 mat-dialog-title>Cambiar</h1>
+<div mat-dialog-content>
+  <mat-form-field>
+    <input matInput type = "number" min="0" step="1" [(ngModel)]="value" value = "data.real">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()" color="warn">Cancelar</button>
+  <button mat-button [mat-dialog-close]="data.id" (click)="callParent()" cdkFocusInitial color="primary">Guardar</button>
+</div>
